@@ -1,1 +1,1 @@
-web: gunicorn dndserver:wsgi
+web: gunicorn dndserver:app
