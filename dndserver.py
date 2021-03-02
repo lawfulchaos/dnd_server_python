@@ -1,6 +1,11 @@
 import os
 
-from flask import Flask, json
+from flask import Flask, json, request
+
+INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
+              "Мудрость",
+              "Ловкость", "Хиты"}
+STRING_LISTS = {"Действия", "Описание", "Действия логова", "Логово", "Способности"}
 
 
 def get_json():
@@ -14,12 +19,39 @@ def get_json():
 
 app = Flask(__name__)
 print("App created")
-files = get_json()
+FILES = get_json()
 print("JSON created")
+
+
+def match_values(pattern_key, pattern_value, item_value):
+    if pattern_key in INT_VALUES:
+        return item_value == int(pattern_value)
+    elif pattern_key in STRING_LISTS:
+        return any([pattern_value in st for st in STRING_LISTS])
+    else:
+        return pattern_value in item_value
+
+
+def search_items(item_list, pattern):
+    found = []
+    for item in item_list:
+        for pattern_key in pattern:
+            if pattern_key not in item \
+                    or not match_values(pattern_key, pattern[pattern_key], item[pattern_key]):
+                break
+        else:
+            found.append(item)
+    return found
+
 
 @app.route('/files/<file>', methods=['GET'])
 def get_files(file):
-    return json.dumps(files[file], ensure_ascii=False)
+    pattern = dict(request.args)
+    if pattern:
+        matching = search_items(FILES[file], pattern)
+        return json.dumps(matching, ensure_ascii=False)
+    else:
+        return json.dumps(FILES[file], ensure_ascii=False)
 
 
 @app.route('/', methods=['GET'])
