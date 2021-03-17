@@ -53,6 +53,7 @@ def get_files(file):
         matching = search_items(FILES[file], pattern)
         return json.dumps(matching, ensure_ascii=False)
     else:
+        db.query_expression()
         return json.dumps(FILES[file], ensure_ascii=False)
 
 
