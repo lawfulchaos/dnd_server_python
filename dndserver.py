@@ -46,10 +46,10 @@ def search_items(item_list, pattern):
     return found
 
 
-from models import Item
+from models import Beast, Spell
 
 
-def add_to_db(itemlist):
+def add_to_db(itemlist, itemtype="Spell"):
     translation_table = {"Описание": "description", "Название": "name",
                          "Источник": "source", "Качество": "quality", "Изображения": "images",
                          "Харизма": "charisma", "Чувства": "senses", "Способности": "abilities",
@@ -74,9 +74,11 @@ def add_to_db(itemlist):
         for key in item.copy():
             if key in translation_table:
                 item[translation_table[key]] = item.pop(key)
-        db.session.add(
-            Item(**{k: v for k, v in item.items() if
-                    k not in {'Магический предмет добавил', "Монстра добавил", "Заклинание добавил"}}))
+        if itemtype != "Spell":
+            to_add = Beast(**{k: v for k, v in item.items() if k not in {'Магический предмет добавил', "Монстра добавил", "Заклинание добавил"}})
+        else:
+            to_add = Spell(**{k: v for k, v in item.items() if k not in {'Магический предмет добавил', "Монстра добавил", "Заклинание добавил"}})
+        db.session.add(to_add)
     db.session.commit()
 
 
