@@ -63,7 +63,7 @@ def add_to_db(itemlist, itemtype="Spell"):
                          "Тип доспеха": "armor_type", "Действия": "actions",
                          "Действия логова": "lair_acts",
                          "Cпасброски": "saves", "Эффекты логова": "lair_effects",
-                         "Телосложения": "constitution",
+                         "Телосложение": "constitution",
                          "Опасность": "danger", "Хиты": "hits", "Кубы хитов": "hit_dice",
                          "Иммунитет к урону": "dmg_immunities", "Реакции": "reactions",
                          'Время накладывания': "cast_time", 'Дистанция': "distance",
