@@ -88,4 +88,3 @@ class Spell(db.Model):
     def __repr__(self):
         return '<Spell %r>' % self.name
 
-db.create_all()

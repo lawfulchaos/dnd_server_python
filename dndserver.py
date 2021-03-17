@@ -18,7 +18,7 @@ def get_json():
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'sqlite:///app.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'postgres:///app.db')
 print("App created")
 FILES = get_json()
 db = SQLAlchemy(app)
