@@ -1,11 +1,11 @@
 import os
-
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, json, request
 
 INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
               "Мудрость",
               "Ловкость", "Хиты"}
-STRING_LISTS = {"Действия", "Описание", "Действия логова", "Логово", "Способности"}
+STRING_LISTS = {"Действия", "Описание", "Действия логова", "Логово", "Способности", "Изображения"}
 
 
 def get_json():
@@ -18,8 +18,10 @@ def get_json():
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'sqlite:///app.db')
 print("App created")
 FILES = get_json()
+db = SQLAlchemy(app)
 print("JSON created")
 
 
