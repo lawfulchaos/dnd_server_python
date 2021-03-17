@@ -46,6 +46,20 @@ def search_items(item_list, pattern):
     return found
 
 
+from models import Item
+
+
+def add_items_to_db(itemlist):
+    translation_table = {"Описание": "description", "Название": "name",
+                         "Источник": "source", "Качество": "quality", "Изображения": "images"}
+    for item in itemlist:
+        for key in item.copy():
+            if key in translation_table:
+                item[translation_table[key]] = item.pop(key)
+        db.session.add(Item(*item))
+    db.session.commit()
+
+
 @app.route('/files/<file>', methods=['GET'])
 def get_files(file):
     pattern = dict(request.args)
