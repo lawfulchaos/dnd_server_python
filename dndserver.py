@@ -56,7 +56,8 @@ def add_items_to_db(itemlist):
         for key in item.copy():
             if key in translation_table:
                 item[translation_table[key]] = item.pop(key)
-        db.session.add(Item(**item))
+        db.session.add(
+            Item(**{k: v for k, v in item.items() if k not in {'Магический предмет добавил'}}))
     db.session.commit()
 
 
