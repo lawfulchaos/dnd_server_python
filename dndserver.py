@@ -49,15 +49,34 @@ def search_items(item_list, pattern):
 from models import Item
 
 
-def add_items_to_db(itemlist):
+def add_to_db(itemlist):
     translation_table = {"Описание": "description", "Название": "name",
-                         "Источник": "source", "Качество": "quality", "Изображения": "images"}
+                         "Источник": "source", "Качество": "quality", "Изображения": "images",
+                         "Харизма": "charisma", "Чувства": "senses", "Способности": "abilities",
+                         "Сопротивление урону": "resistance", "Интеллект": "intelligence",
+                         "Сила": "strength", "Легендарные действия": "legendary_acts",
+                         "Уязвимость к урону": "vulnerability", "Класс доспеха": "armor_class",
+                         "Навыки": "skills", "Мудрость": "wisdom",
+                         "Иммунитет к статусу": "status_immunities",
+                         "Логово": "lair", "Ловкость": "agility", "Языки": "languages",
+                         "Скорость": "speed",
+                         "Тип доспеха": "armor_type", "Действия": "actions",
+                         "Действия логова": "lair_acts",
+                         "Cпасброски": "saves", "Эффекты логова": "lair_effects",
+                         "Телосложения": "constitution",
+                         "Опасность": "danger", "Хиты": "hits", "Кубы хитов": "hit_dice",
+                         "Иммунитет к урону": "dmg_immunities", "Реакции": "reactions",
+                         'Время накладывания': "cast_time", 'Дистанция': "distance",
+                         'Длительность': "time_active", 'Классы': "classes", 'Компоненты':
+                             "components", 'Школа': "school"
+                         }
     for item in itemlist:
         for key in item.copy():
             if key in translation_table:
                 item[translation_table[key]] = item.pop(key)
         db.session.add(
-            Item(**{k: v for k, v in item.items() if k not in {'Магический предмет добавил'}}))
+            Item(**{k: v for k, v in item.items() if
+                    k not in {'Магический предмет добавил', "Монстра добавил", "Заклинание добавил"}}))
     db.session.commit()
 
 
