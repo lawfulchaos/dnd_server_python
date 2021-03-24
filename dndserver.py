@@ -96,7 +96,7 @@ def get_entries(entries):
         return json.dumps(matching, ensure_ascii=False)
     else:
 
-        return jsonify(entry_names[entries].query.all(), ensure_ascii=False)
+        return jsonify(entry_names[entries].query.all())
 
 
 @app.route('/', methods=['GET'])
