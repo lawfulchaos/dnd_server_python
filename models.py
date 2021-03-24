@@ -1,4 +1,4 @@
-from manage import db
+from database import db
 
 INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
               "Мудрость",

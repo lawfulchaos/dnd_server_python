@@ -1,7 +1,7 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, json, request
-
+from flask import Flask, json, request, jsonify
+from database import db
 INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
               "Мудрость",
               "Ловкость", "Хиты"}
@@ -20,9 +20,7 @@ def get_json():
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'postgres:///app.db')
 print("App created")
-FILES = get_json()
-db = SQLAlchemy(app)
-print("JSON created")
+db.init_app(app)
 
 
 def match_values(pattern_key, pattern_value, item_value):
@@ -36,6 +34,8 @@ def match_values(pattern_key, pattern_value, item_value):
 
 def search_items(item_list, pattern):
     found = []
+    items = item_list.query
+    items.filter_by(pattern).all()
     for item in item_list:
         for pattern_key in pattern:
             if pattern_key not in item \
@@ -46,51 +46,57 @@ def search_items(item_list, pattern):
     return found
 
 
-from models import Beast, Spell
+#
+#
+# def add_to_db(itemlist, itemtype="Spell"):
+#     translation_table = {"Описание": "description", "Название": "name",
+#                          "Источник": "source", "Качество": "quality", "Изображения": "images",
+#                          "Харизма": "charisma", "Чувства": "senses", "Способности": "abilities",
+#                          "Сопротивление урону": "resistance", "Интеллект": "intelligence",
+#                          "Сила": "strength", "Легендарные действия": "legendary_acts",
+#                          "Уязвимость к урону": "vulnerability", "Класс доспеха": "armor_class",
+#                          "Навыки": "skills", "Мудрость": "wisdom",
+#                          "Иммунитет к статусу": "status_immunities",
+#                          "Логово": "lair", "Ловкость": "agility", "Языки": "languages",
+#                          "Скорость": "speed",
+#                          "Тип доспеха": "armor_type", "Действия": "actions",
+#                          "Действия логова": "lair_acts",
+#                          "Спасброски": "saves", "Эффекты логова": "lair_effects",
+#                          "Телосложение": "constitution",
+#                          "Опасность": "danger", "Хиты": "hits", "Кубы хитов": "hit_dice",
+#                          "Иммунитет к урону": "dmg_immunities", "Реакции": "reactions",
+#                          'Время накладывания': "cast_time", 'Дистанция': "distance",
+#                          'Длительность': "time_active", 'Классы': "classes", 'Компоненты':
+#                              "components", 'Школа': "school"
+#                          }
+#     for item in itemlist:
+#         for key in item.copy():
+#             if key in translation_table:
+#                 item[translation_table[key]] = item.pop(key)
+#         if itemtype != "Spell":
+#             to_add = Beast(**{k: v for k, v in item.items() if
+#                               k not in {'Магический предмет добавил', "Монстра добавил",
+#                                         "Заклинание добавил"}})
+#         else:
+#             to_add = Spell(**{k: v for k, v in item.items() if
+#                               k not in {'Магический предмет добавил', "Монстра добавил",
+#                                         "Заклинание добавил"}})
+#         db.session.add(to_add)
+#     db.session.commit()
+from models import Beast, Spell, Item
+
+entry_names = {"spell": Spell, "beast": Beast, "item": Item}
 
 
-def add_to_db(itemlist, itemtype="Spell"):
-    translation_table = {"Описание": "description", "Название": "name",
-                         "Источник": "source", "Качество": "quality", "Изображения": "images",
-                         "Харизма": "charisma", "Чувства": "senses", "Способности": "abilities",
-                         "Сопротивление урону": "resistance", "Интеллект": "intelligence",
-                         "Сила": "strength", "Легендарные действия": "legendary_acts",
-                         "Уязвимость к урону": "vulnerability", "Класс доспеха": "armor_class",
-                         "Навыки": "skills", "Мудрость": "wisdom",
-                         "Иммунитет к статусу": "status_immunities",
-                         "Логово": "lair", "Ловкость": "agility", "Языки": "languages",
-                         "Скорость": "speed",
-                         "Тип доспеха": "armor_type", "Действия": "actions",
-                         "Действия логова": "lair_acts",
-                         "Спасброски": "saves", "Эффекты логова": "lair_effects",
-                         "Телосложение": "constitution",
-                         "Опасность": "danger", "Хиты": "hits", "Кубы хитов": "hit_dice",
-                         "Иммунитет к урону": "dmg_immunities", "Реакции": "reactions",
-                         'Время накладывания': "cast_time", 'Дистанция': "distance",
-                         'Длительность': "time_active", 'Классы': "classes", 'Компоненты':
-                             "components", 'Школа': "school"
-                         }
-    for item in itemlist:
-        for key in item.copy():
-            if key in translation_table:
-                item[translation_table[key]] = item.pop(key)
-        if itemtype != "Spell":
-            to_add = Beast(**{k: v for k, v in item.items() if k not in {'Магический предмет добавил', "Монстра добавил", "Заклинание добавил"}})
-        else:
-            to_add = Spell(**{k: v for k, v in item.items() if k not in {'Магический предмет добавил', "Монстра добавил", "Заклинание добавил"}})
-        db.session.add(to_add)
-    db.session.commit()
-
-
-@app.route('/files/<file>', methods=['GET'])
-def get_files(file):
+@app.route('/entries/<entries>', methods=['GET'])
+def get_entries(entries):
     pattern = dict(request.args)
     if pattern:
-        matching = search_items(FILES[file], pattern)
+        matching = search_items(entry_names[entries], pattern)
         return json.dumps(matching, ensure_ascii=False)
     else:
-        db.query_expression()
-        return json.dumps(FILES[file], ensure_ascii=False)
+
+        return jsonify(entry_names[entries].query.all(), ensure_ascii=False)
 
 
 @app.route('/', methods=['GET'])
