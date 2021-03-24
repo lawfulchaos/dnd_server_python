@@ -2,6 +2,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, json, request, jsonify
 from database import db
+
 INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
               "Мудрость",
               "Ловкость", "Хиты"}
@@ -88,6 +89,13 @@ from models import Beast, Spell, Item
 entry_names = {"spell": Spell, "beast": Beast, "item": Item}
 
 
+def row2dict(row):
+    return {
+        c.name: str(getattr(row, c.name))
+        for c in row.__table__.columns
+    }
+
+
 @app.route('/entries/<entries>', methods=['GET'])
 def get_entries(entries):
     pattern = dict(request.args)
@@ -95,8 +103,8 @@ def get_entries(entries):
         matching = search_items(entry_names[entries], pattern)
         return json.dumps(matching, ensure_ascii=False)
     else:
-
-        return jsonify(entry_names[entries].query.all())
+        items = [row2dict(item) for item in entry_names[entries].query.all()]
+        return jsonify(items)
 
 
 @app.route('/', methods=['GET'])
