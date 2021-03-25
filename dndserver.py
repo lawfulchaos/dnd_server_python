@@ -98,7 +98,10 @@ def get_entries(entries):
         return json.dumps(matching, ensure_ascii=False)
     else:
         items = [item.to_json(ensure_ascii=False) for item in entry_names[entries].query.all()]
-        return json.dumps(items, ensure_ascii=False)
+        return app.response_class(
+            response=json.dumps(items, ensure_ascii=False),
+            mimetype='application/json'
+        )
 
 
 @app.route('/', methods=['GET'])
