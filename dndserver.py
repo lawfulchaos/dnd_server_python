@@ -1,7 +1,7 @@
 import os
-from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, json, request, jsonify
 from database import db
+from sqlathanor import FlaskBaseModel, initialize_flask_sqlathanor
 
 INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
               "Мудрость",
@@ -22,6 +22,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'postgres:///app.db')
 print("App created")
 db.init_app(app)
+db = initialize_flask_sqlathanor(db)
 
 
 def match_values(pattern_key, pattern_value, item_value):
@@ -89,13 +90,6 @@ from models import Beast, Spell, Item
 entry_names = {"spell": Spell, "beast": Beast, "item": Item}
 
 
-def row2dict(row):
-    return {
-        c.name: str(getattr(row, c.name))
-        for c in row.__table__.columns
-    }
-
-
 @app.route('/entries/<entries>', methods=['GET'])
 def get_entries(entries):
     pattern = dict(request.args)
@@ -103,7 +97,7 @@ def get_entries(entries):
         matching = search_items(entry_names[entries], pattern)
         return json.dumps(matching, ensure_ascii=False)
     else:
-        items = [row2dict(item) for item in entry_names[entries].query.all()]
+        items = [item.to_json() for item in entry_names[entries].query.all()]
         return jsonify(items)
 
 
