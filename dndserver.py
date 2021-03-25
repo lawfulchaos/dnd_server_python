@@ -97,7 +97,7 @@ def get_entries(entries):
         matching = search_items(entry_names[entries], pattern)
         return json.dumps(matching, ensure_ascii=False)
     else:
-        items = [item.to_json() for item in entry_names[entries].query.all()]
+        items = [item.to_json(ensure_ascii=False) for item in entry_names[entries].query.all()]
         return jsonify(items)
 
 
