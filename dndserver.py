@@ -98,7 +98,7 @@ def get_entries(entries):
         return json.dumps(matching, ensure_ascii=False)
     else:
         items = [item.to_json(ensure_ascii=False) for item in entry_names[entries].query.all()]
-        return items
+        return json.dumps(items)
 
 
 @app.route('/', methods=['GET'])
