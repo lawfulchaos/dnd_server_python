@@ -74,7 +74,7 @@ entry_names = {"spell": Spell, "beast": Beast, "item": Item}
 def get_entries(entries):
     pattern = dict(request.args)
     if pattern:
-        matching = search_items(entry_names[entries], pattern)
+        matching = [item.to_dict() for item in search_items(entry_names[entries], pattern)]
         return app.response_class(
             response=json.dumps(matching, ensure_ascii=False),
             mimetype='application/json'
