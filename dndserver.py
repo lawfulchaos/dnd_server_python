@@ -1,5 +1,5 @@
 import os
-from flask import Flask, json, request, jsonify
+from flask import Flask, json, request, jsonify, abort
 from database import db
 from sqlathanor import FlaskBaseModel, initialize_flask_sqlathanor
 
@@ -72,6 +72,8 @@ entry_names = {"spell": Spell, "beast": Beast, "item": Item}
 
 @app.route('/entries/<entries>', methods=['GET'])
 def get_entries(entries):
+    if entries not in entry_names:
+        abort(404)
     pattern = dict(request.args)
     if pattern:
         matching = [item.to_dict() for item in search_items(entry_names[entries], pattern)]
