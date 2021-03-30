@@ -24,28 +24,8 @@ print("App created")
 db.init_app(app)
 db = initialize_flask_sqlathanor(db)
 
-
-def match_values(pattern_key, pattern_value, item_value):
-    if pattern_key in INT_VALUES:
-        return item_value == int(pattern_value)
-    elif pattern_key in STRING_LISTS:
-        return any([pattern_value in st for st in STRING_LISTS])
-    else:
-        return pattern_value in item_value
-
-
 def search_items(item_list, pattern):
-    found = []
-    items = item_list.query
-    items.filter_by(pattern).all()
-    for item in item_list:
-        for pattern_key in pattern:
-            if pattern_key not in item \
-                    or not match_values(pattern_key, pattern[pattern_key], item[pattern_key]):
-                break
-        else:
-            found.append(item)
-    return found
+    return item_list.query.filter(*[getattr(Item, col_name).like("%" + pattern[col_name] + "%") for col_name in pattern]).all()
 
 
 #
@@ -95,7 +75,11 @@ def get_entries(entries):
     pattern = dict(request.args)
     if pattern:
         matching = search_items(entry_names[entries], pattern)
-        return json.dumps(matching, ensure_ascii=False)
+        return app.response_class(
+            response=json.dumps(matching, ensure_ascii=False),
+            mimetype='application/json'
+        )
+
     else:
         items = [item.to_dict() for item in entry_names[entries].query.all()]
         return app.response_class(
