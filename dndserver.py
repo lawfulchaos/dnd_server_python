@@ -57,6 +57,7 @@ def add_to_db(itemlist, itemtype="Spell"):
                              "components", 'Школа': "school", "Уровень": "level"
                          }
     for item in itemlist:
+        item["id"] = itemlist.index(item)
         for key in item.copy():
             if key in translation_table:
                 if key == "Уровень":
