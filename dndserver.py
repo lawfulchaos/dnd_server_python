@@ -1,7 +1,9 @@
 import os
-from flask import Flask, json, request, jsonify, abort
+
+from flask import Flask, json, request, abort
+from sqlathanor import initialize_flask_sqlathanor
+
 from database import db
-from sqlathanor import FlaskBaseModel, initialize_flask_sqlathanor
 
 INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
               "Мудрость",
@@ -79,14 +81,14 @@ def get_entries(entries):
         abort(404)
     pattern = dict(request.args)
     if pattern:
-        matching = [item.to_dict() for item in search_items(entry_names[entries], pattern)]
+        matching = [item.to_dict(max_nesting=3) for item in search_items(entry_names[entries], pattern)]
         return app.response_class(
             response=json.dumps(matching, ensure_ascii=False),
             mimetype='application/json'
         )
 
     else:
-        items = [item.to_dict() for item in entry_names[entries].query.all()]
+        items = [item.to_dict(max_nesting=3) for item in entry_names[entries].query.all()]
         return app.response_class(
             response=json.dumps(items, ensure_ascii=False),
             mimetype='application/json'

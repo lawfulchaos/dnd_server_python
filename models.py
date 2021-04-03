@@ -1,8 +1,5 @@
 from database import db
 
-INT_VALUES = {"Интеллект", "Опасность", "Класс доспеха", "Сила", "Телосложение", "Харизма",
-              "Мудрость",
-              "Ловкость", "Хиты"}
 
 class Beast(db.Model):
     __tablename__ = 'beasts'
