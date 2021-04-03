@@ -4,7 +4,6 @@ INT_VALUES = {"Интеллект", "Опасность", "Класс доспе
               "Мудрость",
               "Ловкость", "Хиты"}
 
-
 class Beast(db.Model):
     __tablename__ = 'beasts'
 
@@ -243,7 +242,7 @@ class Spell(db.Model):
                        supports_dict=True,
                        on_serialize=None,
                        on_deserialize=None)
-    classes = db.Column("classes", db.String, supports_json=True,
+    classes = db.Column("classes", db.ARRAY(item_type=db.String), supports_json=True,
                         supports_yaml=True,
                         supports_dict=True,
                         on_serialize=None,
