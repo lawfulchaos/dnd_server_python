@@ -54,11 +54,13 @@ def add_to_db(itemlist, itemtype="Spell"):
                          "Иммунитет к урону": "dmg_immunities", "Реакции": "reactions",
                          'Время накладывания': "cast_time", 'Дистанция': "distance",
                          'Длительность': "time_active", 'Классы': "classes", 'Компоненты':
-                             "components", 'Школа': "school"
+                             "components", 'Школа': "school", "Уровень": "level"
                          }
     for item in itemlist:
         for key in item.copy():
             if key in translation_table:
+                if key == "Уровень":
+                    item[key] = int(item[key])
                 item[translation_table[key]] = item.pop(key)
         if itemtype != "Spell":
             to_add = Beast(**{k: v for k, v in item.items() if

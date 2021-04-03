@@ -214,6 +214,11 @@ class Spell(db.Model):
                    supports_dict=True,
                    on_serialize=None,
                    on_deserialize=None)
+    level = db.Column("level", db.Integer, primary_key=True, supports_json=True,
+                   supports_yaml=True,
+                   supports_dict=True,
+                   on_serialize=None,
+                   on_deserialize=None)
     name = db.Column("name", db.String, unique=True, supports_json=True,
                      supports_yaml=True,
                      supports_dict=True,
