@@ -4,7 +4,7 @@ from database import db
 class Beast(db.Model):
     __tablename__ = 'beasts'
 
-    id = db.Column("id", db.Integer, primary_key=True,
+    id = db.Column("id", db.Integer, primary_key=True, autoincrement=True,
                    supports_json=True,
                    supports_yaml=True,
                    supports_dict=True,
@@ -171,7 +171,7 @@ class Beast(db.Model):
 class Item(db.Model):
     __tablename__ = 'items'
 
-    id = db.Column("id", db.Integer, primary_key=True, supports_json=True,
+    id = db.Column("id", db.Integer, primary_key=True, supports_json=True, autoincrement=True,
                    supports_yaml=True,
                    supports_dict=True,
                    on_serialize=None,
@@ -209,7 +209,7 @@ class Item(db.Model):
 class Spell(db.Model):
     __tablename__ = 'spells'
 
-    id = db.Column("id", db.Integer, primary_key=True, supports_json=True,
+    id = db.Column("id", db.Integer, primary_key=True, supports_json=True, autoincrement=True,
                    supports_yaml=True,
                    supports_dict=True,
                    on_serialize=None,
